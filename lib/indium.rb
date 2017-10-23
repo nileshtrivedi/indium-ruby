@@ -13,6 +13,10 @@ class Indium
     Bdb.balance_asset(@ipdb, pubkey, @asset_id)
   end
 
+  def transfer(receiver_pubkeys_amounts, sender_pubkey, sender_privkey)
+    Bdb.transfer_asset(@ipdb, receiver_pubkeys_amounts, sender_pubkey, sender_privkey, unspent_outputs = nil, @asset_id)
+  end
+
   def self.test(app_id = nil, app_key = nil)
     self.new("4725818866863db70d8e2a650b8acb92a8fd801dceedfc6709b5595af91ae08c", {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
   end
