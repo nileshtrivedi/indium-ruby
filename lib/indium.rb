@@ -14,10 +14,10 @@ class Indium
   end
 
   def self.test(app_id = nil, app_key = nil)
-    self.new(test_asset_id, {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
+    self.new("4725818866863db70d8e2a650b8acb92a8fd801dceedfc6709b5595af91ae08c", {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
   end
 
   def self.prod(app_id = nil, app_key = nil)
-    self.new(prod_asset_id, {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
+    self.new("1b17519e003dadaafefdd5011e4a1b3b503cc8b0621bba2e462793ba26720d74", {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
   end
 end
