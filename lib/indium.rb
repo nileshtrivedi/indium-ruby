@@ -10,7 +10,7 @@ class Indium
   end
 
   def balance(pubkey)
-    Bdb.balance_asset(@ipdb, public_key, @asset_id)
+    Bdb.balance_asset(@ipdb, pubkey, @asset_id)
   end
 
   def self.test(app_id = nil, app_key = nil)
