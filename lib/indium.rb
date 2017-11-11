@@ -13,8 +13,8 @@ class Indium
     Bdb.balance_asset(@ipdb, pubkey, @asset_id)
   end
 
-  def transfer(receiver_pubkeys_amounts, sender_pubkey, sender_privkey)
-    Bdb.transfer_asset(@ipdb, receiver_pubkeys_amounts, sender_pubkey, sender_privkey, unspent_outputs = nil, @asset_id)
+  def transfer(receiver_pubkeys_amounts, sender_pubkey, sender_privkey, data)
+    Bdb.transfer_asset(@ipdb, receiver_pubkeys_amounts, sender_pubkey, sender_privkey, unspent_outputs = nil, @asset_id, data)
   end
 
   def self.test(app_id = nil, app_key = nil)
