@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'indium'
-  s.version     = '0.0.7'
-  s.date        = '2017-11-11'
+  s.version     = '0.0.8'
+  s.date        = '2017-11-27'
   s.summary     = "Indium - asset on IPDB"
   s.description = "Library for querying/posting Indium transactions on IPDB"
   s.authors     = ["Nilesh Trivedi"]
