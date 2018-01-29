@@ -1,27 +1,76 @@
-require 'bigchaindb'
+require 'stellar-sdk'
+require 'httparty'
+require 'json'
 
 class Indium
-  attr_reader :asset_id
-  attr_reader :ipdb
+  attr_reader :mode
 
-  def initialize(asset_id, ipdb)
-    @asset_id = asset_id
-    @ipdb = ipdb
+  def initialize(mode)
+    @issuer_address = "GB6TBT62K4NG2MIHMGGRZPIW2GI62T56RCWHWHKCY2BIORDPQQ5LCPVR"
+    @issuer = Stellar::KeyPair.from_address(@issuer_address)
+    @asset = Stellar::Asset.alphanum12("INDIUM", @issuer)
+    @mode = mode # test or prod
+    if mode == 'test'
+      @client = Stellar::Client.default_testnet
+      @horizon = "https://horizon-testnet.stellar.org"
+    elsif mode == 'prod'
+      @client = Stellar::Client.default
+      @horizon = "https://horizon.stellar.org"
+    end
   end
 
-  def balance(pubkey)
-    Bdb.balance_asset(@ipdb, pubkey, @asset_id)
+  def balances(pubkey)
+    resp = HTTParty.get(@horizon + "/accounts/" + pubkey)
+    JSON.parse(resp.body)["balances"].inject({}) do |f,h|
+      f.merge({ (h["asset_code"] || h["asset_type"]) => h["balance"] })
+    end
   end
 
-  def transfer(receiver_pubkeys_amounts, sender_pubkey, sender_privkey, data)
-    Bdb.transfer_asset(@ipdb, receiver_pubkeys_amounts, sender_pubkey, sender_privkey, unspent_outputs = nil, @asset_id, data)
+  def balances_direct(pubkey)
+    account = Stellar::Account.from_address(pubkey)
+    @client.account_info(account).balances.inject({}) do |f,h|
+      f.merge({ (h["asset_code"] || h["asset_type"]) => h["balance"] })
+    end
   end
 
-  def self.test(app_id = nil, app_key = nil)
-    self.new("4bf41c7d08bef68181fd378308691cc2ce65661804d317e2db72b9c0d4f1d73f", {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
+  def transfer_native(amount, sender_privkey, receiver_pubkey)
+    sender    = Stellar::Account.from_seed(sender_privkey)
+    recipient = Stellar::Account.from_address(receiver_pubkey)
+
+    @client.send_payment({
+      from:   sender,
+      to:     recipient,
+      amount: Stellar::Amount.new(amount)
+    })
   end
 
-  def self.prod(app_id = nil, app_key = nil)
-    self.new("c49b21534ee715ad844bc178a6a578d63a4971d1f52ad783e18a6a2f27710e68", {"url" => "https://test.ipdb.io/api/v1", "app_id" => app_id, "app_key" => app_key})
+  def transfer(amount, sender_privkey, receiver_pubkey)
+    sender    = Stellar::Account.from_seed(sender_privkey)
+    recipient = Stellar::Account.from_address(receiver_pubkey)
+
+    @client.send_payment({
+      from:   sender,
+      to:     recipient,
+      amount: Stellar::Amount.new(amount, @asset)
+    })
+  end
+
+  def create_indium_account(privkey)
+    account = Stellar::Account.random
+    transfer_native(4, privkey, account.address) # Activate the account
+
+    @client.trust({
+      account:  account,
+      asset: @asset
+    }) # create a trustline for Indium token
+    return [account.address, account.keypair.seed]
+  end
+
+  def self.test
+    self.new('test')
+  end
+
+  def self.prod
+    self.new('prod')
   end
 end
