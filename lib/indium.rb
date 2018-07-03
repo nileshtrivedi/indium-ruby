@@ -26,16 +26,19 @@ class Indium
     return kp.address, kp.private_hex
   end
 
-  def self.local
-    self.new('http://localhost:8545',43391)
+  def self.local(chain_id = 17622)
+    self.new('http://localhost:8545',chain_id)
   end
 
-  def self.test
-    self.new('http://localhost:8545',43391)
+  def self.test(chain_id = 17622)
+    self.new('http://testrpcnode.indium.network:8545',chain_id)
   end
 
-  def self.prod
-    raise "Indium production network is not yet live"
-    self.new('https://rpcnode.indium.network:8545',43391)
+  def self.prod(chain_id = 17622)
+    self.new('http://rpcnode.indium.network:8545',chain_id)
+  end
+
+  def self.custom(url, chain_id = 17622)
+    self.new(url, chain_id)
   end
 end
