@@ -6,12 +6,13 @@
 
 - Initialize with the host+port of an Indium node which has RPC enabled:
 ```
-indium = Indium.custom("http://1.2.3.4:8545")
+indium = Indium.custom("http://your-rpcnode.url:8545", chain_id = 246)
+indium = Indium.prod # which uses url = http://rpcnode.indium.network:8545 and chain_id = 246
 ```
 
 - Generate a keypair (offline operation):
 ```
-public_key, private_key = indium.create_indium_account
+public_key, private_key = indium.create_keypair
 ```
 
 - Check account balance of an address/public key:
@@ -21,7 +22,7 @@ indium.balance(pubkey)
 
 - Transfer some coins to an address (need sender's private key and recipient's public key):
 ```
-# This does NOT transmit sender's private key to the node, only sends a signed transaction
+Currently this uses a signing service so private keys are transmitted. Use carefully.
 indium.transfer(sender_privkey, receiver_pubkey, amount, hex_data, gas_limit = 21_000, gas_price = 3_141_592)
 ```
 
