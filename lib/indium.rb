@@ -1,6 +1,7 @@
 require 'ethereum.rb'
 require 'eth'
 require 'httpclient'
+require 'bigdecimal'
 
 class Indium
   attr_reader :client
@@ -36,6 +37,14 @@ class Indium
       "data" => hex_data
     }
     return http.post(signtxn_url, params)
+  end
+
+  def wei_to_eth_str(w)
+    (BigDecimal.new(w.to_i) / BigDecimal.new("1000_000_000_000_000_000")).to_s
+  end
+
+  def eth_str_to_wei(es)
+    (BigDecimal.new(es.to_s) * BigDecimal.new("1000_000_000_000_000_000")).to_i
   end
 
   def create_keypair
