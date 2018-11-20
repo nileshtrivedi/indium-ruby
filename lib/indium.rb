@@ -24,19 +24,25 @@ class Indium
   end
 
   def transfer(signtxn_url, sender_privkey, receiver_pubkey, amount, hex_data = "", gas_limit = 21_000, gas_price = 3_141_592)
-    http = HTTPClient.new
-    params = {
-      "rpc" => @node_url,
-      "receiver" => receiver_pubkey,
-      "sender" => Eth::Key.new(priv: sender_privkey).address,
-      "privkey" => sender_privkey,
-      "amount" => amount,
-      "gaslimit" => gas_limit,
-      "gasprice" => gas_price,
-      "chain" => @chain_id,
-      "data" => hex_data
-    }
-    return http.post(signtxn_url, params)
+  	if signtxn_url
+		http = HTTPClient.new
+		params = {
+		  "rpc" => @node_url,
+		  "receiver" => receiver_pubkey,
+		  "sender" => Eth::Key.new(priv: sender_privkey).address,
+		  "privkey" => sender_privkey,
+		  "amount" => amount,
+		  "gaslimit" => gas_limit,
+		  "gasprice" => gas_price,
+		  "chain" => @chain_id,
+		  "data" => hex_data
+		}
+		return http.post(signtxn_url, params)
+	else
+		@client.gas_price = gas_price
+		@client.gas_limit = gas_limit
+		return @client.transfer(sender_privkey, receiver_pubkey, amount)
+	end
   end
 
   def wei_to_eth_str(w)

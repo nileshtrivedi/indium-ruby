@@ -22,8 +22,8 @@ indium.balance(pubkey)
 
 - Transfer some coins to an address (need sender's private key and recipient's public key):
 ```
-Currently this uses a signing service so private keys are transmitted. Use carefully.
-indium.transfer(sender_privkey, receiver_pubkey, amount, hex_data, gas_limit = 21_000, gas_price = 3_141_592)
+# Txn is signed locally so private keys are never transmitted
+indium.transfer(nil, sender_privkey, receiver_pubkey, amount, hex_data, gas_limit = 21_000, gas_price = 3_141_592)
 ```
 
 - For other methods (deploying/invoking contracts, creating a txn from scratch etc.), you can directly access the internal client obj with `indium.client` which is documented here: 
